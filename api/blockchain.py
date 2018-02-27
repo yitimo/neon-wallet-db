@@ -8,7 +8,7 @@ from .util import MAINNET_SEEDS, TESTNET_SEEDS
 import time
 from .scripts import add_fees
 
-nodeAPI = os.environ.get('NODEAPI')
+nodeAPI = os.environ.get('RPC')
 appName = os.environ.get('APPNAME')
 net = os.environ.get('NET')
 

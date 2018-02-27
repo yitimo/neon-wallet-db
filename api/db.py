@@ -3,25 +3,13 @@ import os
 import redis
 from rq import Queue
 
-# MONGOUSER = os.environ.get('MONGOUSER')
-# MONGOPASS = os.environ.get('MONGOPASS')
-# MONGOURL = os.environ.get('MONGOURL')
-MONGOAPP = "neonwalletdb"
-MONGOURL = "mongodb://127.0.0.1:27017"
+MONGOAPP = os.environ.get('MONGOAPP') # "neonwalletdb"
+MONGOURL = os.environ.get('MONGODB') # "mongodb://127.0.0.1:27017"
+REDISURL = os.environ.get('REDIS') # "redis://127.0.0.1:6379"
 
 client = MongoClient(MONGOURL)
 db = client[MONGOAPP]
-
-# db["meta"].insert_one({"name":"lastTrustedBlock", "value":1162327})
-# db["meta"].insert_one({"name":"lastTrustedTransaction", "value":1162327})
-
-# redis
-
-# redis_url = os.environ.get('REDISTOGO_URL')
-
-redis_db = redis.from_url("redis://127.0.0.1:6379")
-
-# redis_db.flushdb()
+redis_db = redis.from_url(REDISURL)
 
 q = Queue(connection=redis_db)
 
