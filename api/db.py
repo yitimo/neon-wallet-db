@@ -1,11 +1,10 @@
 from pymongo import MongoClient
-import os
 import redis
 from rq import Queue
 
-MONGOAPP = os.environ.get('MONGOAPP') # "neonwalletdb"
-MONGOURL = os.environ.get('MONGODB') # "mongodb://127.0.0.1:27017"
-REDISURL = os.environ.get('REDIS') # "redis://127.0.0.1:6379"
+MONGOAPP = "neonwalletdb"
+MONGOURL = "mongodb://127.0.0.1:27017"
+REDISURL = "redis://127.0.0.1:6379"
 
 client = MongoClient(MONGOURL)
 db = client[MONGOAPP]

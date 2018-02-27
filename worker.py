@@ -1,4 +1,3 @@
-import os
 from rq import Worker, Queue, Connection
 from api import redis_db as conn
 

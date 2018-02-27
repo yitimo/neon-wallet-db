@@ -6,7 +6,6 @@ from pymongo import MongoClient
 from flask import request
 from flask.ext.cache import Cache
 from flask_cors import CORS, cross_origin
-import os
 from .db import q, transaction_db, blockchain_db, meta_db, logs_db, address_db
 from .blockchain import storeBlockInDB, get_highest_node
 from .util import ANS_ID, ANC_ID, calculate_bonus
@@ -17,7 +16,7 @@ from .cache import cache
 
 api_old = Blueprint('api_old',__name__)
 
-NET = os.environ.get('NET')
+NET = "PrivNet"
 
 symbol_dict = {ANS_ID: "NEO", ANC_ID: "GAS"}
 
