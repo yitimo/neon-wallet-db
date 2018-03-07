@@ -7,7 +7,7 @@ from .util import MAINNET_SEEDS, TESTNET_SEEDS
 import time
 from .scripts import add_fees
 
-nodeAPI = "http://192.168.1.15:20332"
+nodeAPI = "http://192.168.0.134:20332" # "http://192.168.1.15:20332" "http://192.168.0.134:20332"
 net = "TestNet"
 
 # helper for making node RPC request
