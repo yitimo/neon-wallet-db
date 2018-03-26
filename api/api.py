@@ -199,6 +199,8 @@ def get_transaction(txid):
 
 def collect_txids(txs):
     store = {"NEO": {}, "GAS": {}}
+    # 遍历里面的tx
+    # 只留下输入的txid和index
     for tx in txs:
         for k in ["NEO", "GAS"]:
             for tx_ in tx[k]:
@@ -210,14 +212,18 @@ def collect_txids(txs):
 @cache.cached(timeout=15)
 def get_balance(address):
     transactions = [t for t in transaction_db.find({"$or":[
-        {"vout":{"$elemMatch":{"address":address}}},
-        {"vin_verbose":{"$elemMatch":{"address":address}}}
+        {"vout":{"$elemMatch":{"address":address}}}, # 输出 地址为这个地址的交易
+        {"vin_verbose":{"$elemMatch":{"address":address}}} # 输入地址为这个地址的交易
     ]})]
+    # 拿出这些tx中属于这个地址所有输入
     info_sent = [info_sent_transaction(address, t) for t in transactions]
+    # 拿出这些tx中属于这个地址所有输出
     info_received = [info_received_transaction(address, t) for t in transactions]
     sent = collect_txids(info_sent)
     received = collect_txids(info_received)
+    # received中不在sent中的条目为未花费的tx
     unspent = {k:{k_:v_ for k_,v_ in received[k].items() if (not k_ in sent[k])} for k in ["NEO", "GAS"]}
+    # 顺便把余额总量算出来
     totals = {k:sum([v_["value"] for k_,v_ in unspent[k].items()]) for k in ["NEO", "GAS"]}
     return jsonify({
         "net": NET,

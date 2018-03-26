@@ -82,30 +82,33 @@ def storeBlockTransactions(block):
     out = []
     total_sys = 0.0
     total_net = 0.0
-    for t in transactions:
-        t['txid'] = convert_txid(t['txid'])
+    for t in transactions: # 遍历交易
+        t['txid'] = convert_txid(t['txid']) # 去掉0x
         t['block_index'] = block["index"]
         t['sys_fee'] = float(t['sys_fee'])
         t['net_fee'] = float(t['net_fee'])
-        total_sys += t['sys_fee']
-        total_net += t['net_fee']
-        if 'vin' in t: #t['type'] == 'ContractTransaction':
+        total_sys += t['sys_fee'] # 累加费用
+        total_net += t['net_fee'] # 累加费用
+        if 'vin' in t: # 存在输入
             input_transaction_data = []
             for vin in t['vin']:
                 vin['txid'] = convert_txid(vin['txid'])
                 try:
                     print("trying...")
+                    # 从已有存储找到这条输入对应的tx
                     lookup_t = blockchain_db['transactions'].find_one({"txid": vin['txid']})
                     # print(lookup_t)
+                    # 把找到的tx的输出拿出来
                     input_transaction_data.append(lookup_t['vout'][vin['vout']])
                     # print(input_transaction_data)
+                    # 把这个加载最后的tx的txid设置为这条输入的txid(因为output本身没有txid)
                     input_transaction_data[-1]['txid'] = vin['txid']
                 except:
                     print("failed on transaction lookup")
                     # print(vin['txid'])
                     return False
             t['vin_verbose'] = input_transaction_data
-        if 'claims' in t:
+        if 'claims' in t: # 存在GAS提取 包含的也是个txid
             claim_transaction_data = []
             key_data = []
             for claim in t["claims"]:
@@ -123,6 +126,7 @@ def storeBlockTransactions(block):
                     print(claim['txid'])
             t['claims_verbose'] = claim_transaction_data
             t['claims_keys_v1'] = key_data
+        # 也就是说前面的txid会累积在input中 通通赋值到最新的tx中 字段为vin_verbose
         blockchain_db['transactions'].update_one({"txid": t["txid"]}, {"$set": t}, upsert=True)
     return True, total_sys, total_net
 
